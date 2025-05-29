@@ -48,17 +48,27 @@ pub fn Home() -> Element {
         // 1. 创建临时文件路径
         let temp_path = temp_dir().join("yt-dlp-temp");
         let ffmpeg_path = temp_dir().join("ffmpeg-temp");
+        #[cfg(not(windows))]
+        {
+            // 2. 写入 yt-dlp 二进制
+            let yt_dlp_exe = include_bytes!("./bin/yt-dlp");
+            std::fs::write(&temp_path, yt_dlp_exe)
+                .map_err(|e| format!("写入临时文件失败: {}", e))
+                .unwrap();
 
-        // 2. 写入 yt-dlp 二进制
-        let yt_dlp_exe = include_bytes!("./bin/yt-dlp");
-        std::fs::write(&temp_path, yt_dlp_exe)
-            .map_err(|e| format!("写入临时文件失败: {}", e))
-            .unwrap();
+            let ffmpeg_exe = include_bytes!("./bin/ffmpeg");
+            std::fs::write(&ffmpeg_path, ffmpeg_exe)
+                .map_err(|e| format!("写入临时文件失败: {}", e))
+                .unwrap();
+        }
 
-        let ffmpeg_exe = include_bytes!("./bin/ffmpeg");
-        std::fs::write(&ffmpeg_path, ffmpeg_exe)
-            .map_err(|e| format!("写入临时文件失败: {}", e))
-            .unwrap();
+        #[cfg(windows)]
+        {
+            yt_dlp_bytes = include_bytes!("./bin/yt-dlp.exe");
+            ffmpeg_bytes = include_bytes!("./bin/ffmpeg.exe");
+            yt_dlp_name = "yt-dlp-temp.exe";
+            ffmpeg_name = "ffmpeg-temp.exe";
+        }
 
         // 3. 在 Unix 系统上设置可执行权限
         #[cfg(unix)]
