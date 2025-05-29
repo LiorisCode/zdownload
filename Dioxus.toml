@@ -1,0 +1,27 @@
+[application]
+
+[web.app]
+
+# HTML title tag content
+title = "知视频下载助手"
+
+# include `assets` in web platform
+[web.resource]
+
+# Additional CSS style files
+style = []
+
+# Additional JavaScript files
+script = []
+
+[web.resource.dev]
+
+# Javascript code file
+# serve: [dev-server] only
+script = []
+
+[bundle]
+
+icon = ["assets/icon.icns"]
+identifier = "https://github.com/LiorisCode"
+publisher = "Lioris魔法师"
